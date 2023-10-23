@@ -1,0 +1,133 @@
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.ArrayList;
+
+public class Main
+{
+  public static void main (String[]args)
+  {
+    Scanner sc = new Scanner (System.in);
+      System.out.print ("ingrese nombre del jugador 1: ");
+    String jugador1 = sc.nextLine ();
+      System.out.print ("ingrese nombre del jugaror 2: ");
+    String jugador2 = sc.nextLine ();
+      System.out.println ("Bienvenidos al BINGO!");
+    boolean hayGanador = false;
+      List < Integer > ruleta = generarRuleta ();
+      List <List<Integer>> tableros = generarTableros(); 
+    int turno = 1;
+    while (!hayGanador){
+        System.out.println ("---Turno " + turno + " ---");
+        int numero = obtenerNumero (ruleta);
+    System.out.println("Presione enter para pasar al siguiente turno...");
+    sc.nextLine();
+    System.out.println("El numero sorteado: " + numero );
+    System.out.println(jugador1 + " Estado del tablero: ");
+    mostarTablero(tableros.get(0));
+    System.out.println( jugador2 + " Estado del tablero");
+    mostarTablero(tableros.get(1));
+    verificarNumero (tableros.get(0) ,numero);
+    verificarNumero (tableros.get(1) ,numero);
+    hayGanador= verificarGanador( tableros);
+    turno++;
+    }
+    System.out.println("Tenemos a un ganador");
+    if(hayGanador && turno %2==0){
+        System.out.println("Felicidades eres el gandor del BINGO " + jugador1);
+    }
+    else{
+         System.out.println("Felicidades eres el gandor del BINGO " + jugador2);
+    }
+    System.out.println("Presione enter para pasar al siguiente turno...");
+    sc.nextLine();
+  }
+  private static List <List<Integer>> generarTableros(){
+      List <List<Integer>> tableros=new ArrayList<>();
+      for (int i= 0 ; i<2 ; i++){
+          List<Integer> tablero = new ArrayList<>();
+          for ( int j= 1 ; j<= 25; j++){
+          tablero.add(j);
+          }
+           Collections.shuffle(tablero);
+           tableros.add (tablero);
+      }
+      return tableros;
+  }
+  private static int obtenerNumero (List < Integer > ruleta){
+
+    Random random = new Random ();	//Generador de numeros random-random es mi objeto
+    int inicio = random.nextInt (ruleta.size());
+    int numero = ruleta.get (inicio);
+    ruleta.remove (inicio);
+    return numero;
+  }
+  private static List < Integer > generarRuleta() {
+    List < Integer > ruleta = new ArrayList <> ();
+    for (int i = 1; i <= 75; i++) {
+	ruleta.add (i);
+      }
+      Collections.shuffle(ruleta);
+      return ruleta;
+  }
+  private static void mostarTablero (List < Integer > tablero) {
+      for (int i =0 ; i<tablero.size();i++){
+          System.out.print( tablero.get(i));
+          if ((i+1)%5==0){
+              System.out.println();
+          }
+          else{
+              System.out.print("\t");
+          }
+         
+      }
+      System.out.println();
+  }
+  private static void verificarNumero ( List <Integer> tablero, int numero){
+      int inicio = tablero.indexOf(numero);
+      if(inicio!=-1){
+          tablero.set(inicio, -1);
+      }
+      
+  }
+  private static boolean verificarGanador ( List <List <Integer>> tableros){
+      for (List<Integer>tablero:tableros){
+          if (ganador(tablero)) {
+              return true;
+          }
+          
+      }
+      return false; 
+  } 
+  private static boolean ganador ( List <Integer> tablero){
+      int[][]ganador= { 
+          {0,1,2,3,4},{5,6,7,8,9},{10,11,12,13,14},{15,16,17,18,19},{20,21,22,23,24},{0, 5, 10, 15, 20}, 
+                {1, 6, 11, 16, 21},
+                {2, 7, 12, 17, 22}, 
+                {3, 8, 13, 18, 23}, 
+                {4, 9, 14, 19, 24},
+                {0, 6, 12, 18, 24}, 
+                {4, 8, 12, 16, 20}
+
+          
+          
+  };
+  for (int[]s:ganador){
+      boolean ganadorGame= true;
+      for( int inicio:s){
+          if(tablero.get (inicio)!=-1){
+              ganadorGame= false;
+              break;
+          }
+      }
+      if(ganadorGame){
+          return true;
+      }
+  }
+  return false;
+  
+  }
+ 
+
+}
